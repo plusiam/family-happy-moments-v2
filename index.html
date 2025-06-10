@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✉️ 우리 가족, 행복한 순간 그리기 (v2.7 캡처 영역 최적화)</title>
+    <title>✉️ 우리 가족, 행복한 순간 그리기 (v2.8 기본값 제거)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,6 +78,12 @@
             font-weight: 600;
             color: #92400e;
             gap: 1rem;
+        }
+
+        /* 플레이스홀더 스타일 */
+        .placeholder-text {
+            color: #9ca3af;
+            font-style: italic;
         }
 
         /* 결과물 카드 스타일 */
@@ -253,9 +259,9 @@
                 <!-- 🏫 학급 정보 헤더 -->
                 <div class="school-header">
                     <div class="school-info">
-                        <span>학교: <strong id="schoolPreview">감천초등학교</strong></span>
-                        <span>학년/반: <strong id="gradeClassPreview">3-1</strong></span>
-                        <span>이름: <strong id="namePreview">김수아</strong></span>
+                        <span>학교: <strong id="schoolPreview" class="placeholder-text">학교명 입력</strong></span>
+                        <span>학년/반: <strong id="gradeClassPreview" class="placeholder-text">학년-반</strong></span>
+                        <span>이름: <strong id="namePreview" class="placeholder-text">이름 입력</strong></span>
                     </div>
                 </div>
                 
@@ -485,21 +491,37 @@
                 progressOverlay.classList.remove('show');
             }
 
-            // 🏫 학급 정보 업데이트 함수
+            // 🏫 학급 정보 업데이트 함수 (기본값 제거)
             const updateSchoolInfo = () => {
-                schoolPreview.textContent = schoolInput.value || '감천초등학교';
+                // 입력값이 있을 때만 표시, 없으면 플레이스홀더 스타일 유지
+                if (schoolInput.value.trim()) {
+                    schoolPreview.textContent = schoolInput.value;
+                    schoolPreview.className = '';
+                } else {
+                    schoolPreview.textContent = '학교명 입력';
+                    schoolPreview.className = 'placeholder-text';
+                }
                 
                 const grade = gradeInput.value;
                 const classNum = classInput.value;
                 if (grade && classNum) {
                     gradeClassPreview.textContent = `${grade}-${classNum}`;
+                    gradeClassPreview.className = '';
                 } else if (grade) {
                     gradeClassPreview.textContent = `${grade}학년`;
+                    gradeClassPreview.className = '';
                 } else {
-                    gradeClassPreview.textContent = '3-1';
+                    gradeClassPreview.textContent = '학년-반';
+                    gradeClassPreview.className = 'placeholder-text';
                 }
                 
-                namePreview.textContent = nameInput.value || '김수아';
+                if (nameInput.value.trim()) {
+                    namePreview.textContent = nameInput.value;
+                    namePreview.className = '';
+                } else {
+                    namePreview.textContent = '이름 입력';
+                    namePreview.className = 'placeholder-text';
+                }
             };
 
             // 미리보기 업데이트 함수들
@@ -827,7 +849,8 @@
                 }
             });
             
-            // 초기화
+            // 초기화 - 학급 정보도 올바르게 초기화
+            updateSchoolInfo(); // 초기에 플레이스홀더 표시
             loadData();
             setInterval(saveData, 10000);
         });
