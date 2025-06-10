@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✉️ 우리 가족, 행복한 순간 그리기 (v2.4 최종 개선본)</title>
+    <title>✉️ 우리 가족, 행복한 순간 그리기 (v2.5 학급정보 추가)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,6 +48,27 @@
             min-height: 200px;
             max-height: 350px;
             height: auto;
+        }
+
+        /* 학급 정보 헤더 */
+        .school-header {
+            background: linear-gradient(135deg, #fef3c7, #fed7aa);
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .school-info {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #92400e;
         }
 
         /* 진행 상태 오버레이 */
@@ -105,13 +126,47 @@
 <body class="bg-orange-50 flex flex-col items-center min-h-screen p-4 sm:p-8 no-print">
 
     <main class="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-6 sm:p-10 border-2 border-amber-200">
-        <header class="text-center mb-10">
+        <header class="text-center mb-8">
             <h1 class="text-3xl sm:text-4xl font-bold text-amber-800">✉️ 우리 가족, 행복한 순간 그리기</h1>
             <p class="text-stone-600 mt-2">가족과의 소중한 경험을 떠올려 글과 그림으로 표현해봅시다.</p>
-            <div class="mt-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+            <div class="mt-3 text-xs text-blue-600 bg-blue-50 p-2 rounded">
                 💡 <strong>똑똑한 기능:</strong> 메시지 길이에 맞춰 크기가 자동 조정되며, 인쇄할 때는 A4에 최적화됩니다!
             </div>
         </header>
+
+        <!-- 🏫 학급 정보 입력 섹션 -->
+        <section class="mb-8 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+            <h2 class="text-lg font-bold text-yellow-800 mb-3 text-center">📝 학급 정보 입력</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="schoolInput" class="block font-semibold text-gray-700 mb-1 text-sm">🏫 학교명</label>
+                    <input type="text" id="schoolInput" class="w-full p-2 border border-gray-300 rounded text-sm" 
+                           placeholder="○○초등학교">
+                </div>
+                <div>
+                    <label for="gradeInput" class="block font-semibold text-gray-700 mb-1 text-sm">📚 학년</label>
+                    <select id="gradeInput" class="w-full p-2 border border-gray-300 rounded text-sm">
+                        <option value="">선택</option>
+                        <option value="1">1학년</option>
+                        <option value="2">2학년</option>
+                        <option value="3">3학년</option>
+                        <option value="4">4학년</option>
+                        <option value="5">5학년</option>
+                        <option value="6">6학년</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="classInput" class="block font-semibold text-gray-700 mb-1 text-sm">🏛️ 반</label>
+                    <input type="number" id="classInput" class="w-full p-2 border border-gray-300 rounded text-sm" 
+                           placeholder="1" min="1" max="20">
+                </div>
+                <div>
+                    <label for="nameInput" class="block font-semibold text-gray-700 mb-1 text-sm">👤 이름</label>
+                    <input type="text" id="nameInput" class="w-full p-2 border border-gray-300 rounded text-sm" 
+                           placeholder="홍길동">
+                </div>
+            </div>
+        </section>
 
         <form id="activity-form" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-6">
@@ -120,7 +175,17 @@
                 <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🔴 활동2: 공감 이름표 만들기</h2><div class="space-y-2"><input type="text" id="familyNameInput" class="w-full p-2 border" placeholder="가족 이름 (예: 사랑하는 엄마께)"><textarea id="wordToHearInput" class="w-full p-2 border resize-vertical" placeholder="내가 듣고 싶은 말 (예: 네가 자랑스러워.)" rows="2"></textarea><textarea id="wordToSayInput" class="w-full p-2 border resize-vertical" placeholder="내가 하고 싶은 말 (예: 항상 감사해요!)" rows="2"></textarea></div></section>
                 <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🟢 마무리: 감정 정리하기</h2><div id="emoji-selector" role="radiogroup" aria-label="오늘의 기분 선택" class="flex justify-around p-2 bg-stone-100 rounded-lg"><span role="radio" aria-checked="false" tabindex="0" class="text-3xl cursor-pointer p-1 rounded-full">😊</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">😐</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">😢</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">😠</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">🙌</span></div><textarea id="reasonInput" class="mt-2 w-full p-2 border border-stone-300 rounded-md" placeholder="그렇게 느끼는 이유를 간단히 적어주세요."></textarea></section>
             </div>
+            
             <div id="captureArea" class="bg-amber-50 p-6 rounded-lg border-2 border-dashed border-amber-300">
+                <!-- 🏫 학급 정보 헤더 -->
+                <div class="school-header">
+                    <div class="school-info">
+                        <span>학교: <span id="schoolPreview">감천초등학교</span></span>
+                        <span>학년/반: <span id="gradeClassPreview">3-1</span></span>
+                        <span>이름: <span id="namePreview">김수아</span></span>
+                    </div>
+                </div>
+                
                 <h3 class="text-2xl font-bold text-center text-amber-900 mb-4">✨ 나의 활동 결과물 ✨</h3>
                 
                 <!-- 🎯 동적 크기 조정 적용 -->
@@ -147,7 +212,7 @@
                 
                 <!-- 작성 정보 -->
                 <div class="text-center text-xs text-gray-500 border-t pt-3 mt-4">
-                    작성일: <span id="datePreview"></span> | 이름: ________________
+                    작성일: <span id="datePreview"></span>
                 </div>
             </div>
         </form>
@@ -170,7 +235,12 @@
     </main>
 
     <div id="printable-worksheet" class="hidden bg-white p-8 w-[210mm]">
-        <div class="text-center mb-10 border-b-2 pb-4"><h1 class="text-3xl font-bold text-gray-800">✉️ 우리 가족, 행복한 순간 그리기</h1><p class="text-gray-600 mt-2">이름: _______________</p></div>
+        <div class="text-center mb-10 border-b-2 pb-4">
+            <h1 class="text-3xl font-bold text-gray-800">✉️ 우리 가족, 행복한 순간 그리기</h1>
+            <div class="mt-4 text-lg text-gray-600">
+                <p>학교: _______________ 학년: _____ 반: _____ 이름: _______________</p>
+            </div>
+        </div>
         <div class="space-y-12"><section><h2 class="text-xl font-bold text-gray-700 mb-3">🟡 도입: 생각 열기</h2><p class="mb-2"><b>Q.</b> 가족과 함께한 행복했던 순간이 있나요? (해당하는 곳에 O 표시 하세요)</p><p class="ml-4">□ 네 &nbsp;&nbsp;&nbsp;&nbsp; □ 아니요</p><p class="mt-4"><b>👉</b> 가장 기억에 남는 장면을 아래 말풍선에 적어 보세요!</p><div class="mt-2 ml-4 border rounded-xl p-4 h-24 bg-gray-50"></div></section><section><h2 class="text-xl font-bold text-gray-700 mb-3">🔵 활동1: 엽서로 표현해요</h2><p><b>Q.</b> 그 순간을 엽서로 만든다면 어떤 그림을 그리고 싶나요? 아래 네모 칸에 그리거나, 사진을 붙여보세요.</p><div class="w-full h-64 border-2 border-dashed my-4 flex items-center justify-center text-gray-400"><span>[ 그림을 그리거나 사진을 붙이는 곳 ]</span></div><p><b>💬</b> 엽서에 남기고 싶은 말을 자유롭게 적어보세요.</p><div class="mt-2 border-b border-gray-400 h-8"></div><div class="mt-2 border-b border-gray-400 h-8"></div><div class="mt-2 border-b border-gray-400 h-8"></div></section><section><h2 class="text-xl font-bold text-gray-700 mb-3">🔴 활동2: 공감 이름표 만들기</h2><p><b>Q.</b> 가족에게 어떤 말을 듣고, 어떤 말을 하고 싶나요? 아래 이름표를 채워보세요.</p><div class="mt-2 p-4 border rounded-lg bg-gray-50 space-y-3"><p><b>가족 이름:</b> _________________________</p><p><b>내가 듣고 싶은 말:</b> __________________________________________________</p><p><b>내가 하고 싶은 말:</b> __________________________________________________</p></div></section><section><h2 class="text-xl font-bold text-gray-700 mb-3">🟢 마무리: 감정 정리하기</h2><p><b>Q.</b> 오늘 활동을 마치며, 지금 내 기분은 어떤가요? 마음에 드는 기분에 O 표시하고 이유를 적어보세요.</p><div class="flex justify-around text-4xl my-4"><span>😊</span><span>😐</span><span>😢</span><span>😠</span><span>🙌</span></div><p><b>이유:</b> _________________________________________________________________</p></section></div>
     </div>
 
@@ -189,6 +259,9 @@
             
             // DOM 요소들
             const form=document.getElementById("activity-form"),imageUpload=document.getElementById("imageUpload"),thoughtInput=document.getElementById("thoughtInput"),postcardMessageInput=document.getElementById("postcardMessageInput"),familyNameInput=document.getElementById("familyNameInput"),wordToHearInput=document.getElementById("wordToHearInput"),wordToSayInput=document.getElementById("wordToSayInput"),emojiSelector=document.getElementById("emoji-selector"),emojis=emojiSelector.querySelectorAll('[role="radio"]'),reasonInput=document.getElementById("reasonInput"),imagePreview=document.getElementById("imagePreview"),postcardMessagePreview=document.getElementById("postcardMessagePreview"),nametagFamily=document.getElementById("nametagFamily"),nametagToHear=document.getElementById("nametagToHear"),nametagToSay=document.getElementById("nametagToSay"),finalEmoji=document.getElementById("finalEmoji"),finalReason=document.getElementById("finalReason"),saveBtn=document.getElementById("saveBtn"),resultPrintBtn=document.getElementById("printBtn"),teacherPrintBtn=document.getElementById("teacherPrintBtn"),resetBtn=document.getElementById("resetBtn"),charCount=document.getElementById("charCount"),datePreview=document.getElementById("datePreview"),progressOverlay=document.getElementById("progressOverlay"),progressText=document.getElementById("progressText");
+
+            // 🏫 학급 정보 요소들
+            const schoolInput=document.getElementById("schoolInput"),gradeInput=document.getElementById("gradeInput"),classInput=document.getElementById("classInput"),nameInput=document.getElementById("nameInput"),schoolPreview=document.getElementById("schoolPreview"),gradeClassPreview=document.getElementById("gradeClassPreview"),namePreview=document.getElementById("namePreview");
 
             // 날짜 설정
             datePreview.textContent = new Date().toLocaleDateString('ko-KR');
@@ -215,6 +288,23 @@
             function hideProgress() {
                 progressOverlay.classList.remove('show');
             }
+
+            // 🏫 학급 정보 업데이트 함수
+            const updateSchoolInfo = () => {
+                schoolPreview.textContent = schoolInput.value || '감천초등학교';
+                
+                const grade = gradeInput.value;
+                const classNum = classInput.value;
+                if (grade && classNum) {
+                    gradeClassPreview.textContent = `${grade}-${classNum}`;
+                } else if (grade) {
+                    gradeClassPreview.textContent = `${grade}학년`;
+                } else {
+                    gradeClassPreview.textContent = '3-1';
+                }
+                
+                namePreview.textContent = nameInput.value || '김수아';
+            };
 
             // 기존 함수들
             const updatePostcardPreview=()=>{
@@ -259,9 +349,9 @@
             
             const showFeedback=(e,t=!0)=>{const o=document.createElement("div");o.textContent=e,o.className="feedback-toast",o.style.backgroundColor=t?"#28a745":"#dc3545",document.body.appendChild(o),setTimeout(()=>{o.style.opacity="1"},10),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>{o.remove()},500)},3e3)};
             
-            const saveData=()=>{const e={happyMoment:form.elements.happy_moment.value,thought:thoughtInput.value,postcardMessage:postcardMessageInput.value,familyName:familyNameInput.value,wordToHear:wordToHearInput.value,wordToSay:wordToSayInput.value,emoji:finalEmoji.textContent,reason:reasonInput.value};localStorage.setItem("family_activity_temp",JSON.stringify(e))};
+            const saveData=()=>{const e={happyMoment:form.elements.happy_moment.value,thought:thoughtInput.value,postcardMessage:postcardMessageInput.value,familyName:familyNameInput.value,wordToHear:wordToHearInput.value,wordToSay:wordToSayInput.value,emoji:finalEmoji.textContent,reason:reasonInput.value,school:schoolInput.value,grade:gradeInput.value,class:classInput.value,name:nameInput.value};localStorage.setItem("family_activity_temp",JSON.stringify(e))};
             
-            const loadData=()=>{const e=localStorage.getItem("family_activity_temp");if(e){const t=JSON.parse(e);t.happyMoment&&(form.elements.happy_moment.value=t.happyMoment),thoughtInput.value=t.thought||"",postcardMessageInput.value=t.postcardMessage||"",familyNameInput.value=t.familyName||"",wordToHearInput.value=t.wordToHear||"",wordToSayInput.value=t.wordToSay||"",reasonInput.value=t.reason||"",t.emoji&&"?"!==t.emoji&&emojis.forEach(e=>{e.textContent===t.emoji&&selectEmoji(e)}),updatePostcardPreview(),updateNametag(),updateReason(),showFeedback("이전 작업 내용을 복원했습니다.",!0)}};
+            const loadData=()=>{const e=localStorage.getItem("family_activity_temp");if(e){const t=JSON.parse(e);t.happyMoment&&(form.elements.happy_moment.value=t.happyMoment),thoughtInput.value=t.thought||"",postcardMessageInput.value=t.postcardMessage||"",familyNameInput.value=t.familyName||"",wordToHearInput.value=t.wordToHear||"",wordToSayInput.value=t.wordToSay||"",reasonInput.value=t.reason||"",schoolInput.value=t.school||"",gradeInput.value=t.grade||"",classInput.value=t.class||"",nameInput.value=t.name||"",t.emoji&&"?"!==t.emoji&&emojis.forEach(e=>{e.textContent===t.emoji&&selectEmoji(e)}),updatePostcardPreview(),updateNametag(),updateReason(),updateSchoolInfo(),showFeedback("이전 작업 내용을 복원했습니다.",!0)}};
             
             const selectEmoji=e=>{emojis.forEach(e=>{e.setAttribute("aria-checked","false"),e.setAttribute("tabindex","-1"),e.classList.remove("bg-amber-200")}),e.setAttribute("aria-checked","true"),e.setAttribute("tabindex","0"),e.classList.add("bg-amber-200"),finalEmoji.textContent=e.textContent};
 
@@ -273,6 +363,13 @@
             wordToHearInput.addEventListener('input',updateNametag);
             wordToSayInput.addEventListener('input',updateNametag);
             reasonInput.addEventListener('input',updateReason);
+            
+            // 🏫 학급 정보 이벤트 리스너
+            schoolInput.addEventListener('input',updateSchoolInfo);
+            gradeInput.addEventListener('change',updateSchoolInfo);
+            classInput.addEventListener('input',updateSchoolInfo);
+            nameInput.addEventListener('input',updateSchoolInfo);
+            
             emojiSelector.addEventListener('click',e=>{e.target.matches('[role="radio"]')&&selectEmoji(e.target)});
             emojiSelector.addEventListener('keydown',e=>{e.target.matches('[role="radio"]')&&(" "===e.key||"Enter"===e.key)&&(e.preventDefault(),selectEmoji(e.target))});
 
@@ -284,7 +381,7 @@
                     const canvas = await captureContent();
                     const link = document.createElement('a');
                     const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                    link.download = `가족_행복순간_${timestamp}.png`;
+                    link.download = `가족_행복순간_${nameInput.value || '학생'}_${timestamp}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                     
@@ -338,7 +435,7 @@
                     pdf.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight);
                     
                     const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                    pdf.save(`가족_행복순간_인쇄용_${timestamp}.pdf`);
+                    pdf.save(`가족_행복순간_인쇄용_${nameInput.value || '학생'}_${timestamp}.pdf`);
                     
                     hideProgress();
                     showFeedback('✅ A4 최적화 PDF가 저장되었습니다!', true);
@@ -349,7 +446,7 @@
                 }
             });
 
-            resetBtn.addEventListener('click',()=>{confirm("정말로 모든 내용을 지우고 처음부터 다시 시작할까요? (저장된 내용도 삭제됩니다)")&&(form.reset(),localStorage.removeItem("family_activity_temp"),imagePreview.innerHTML="사진을 업로드 해주세요",updatePostcardPreview(),updateNametag(),updateReason(),emojis.forEach(e=>{e.setAttribute("aria-checked","false"),e.classList.remove("bg-amber-200")}),emojis.length>0&&(emojis[0].setAttribute("tabindex","0")),finalEmoji.textContent="?",showFeedback("모든 내용이 초기화되었습니다.",!0))});
+            resetBtn.addEventListener('click',()=>{confirm("정말로 모든 내용을 지우고 처음부터 다시 시작할까요? (저장된 내용도 삭제됩니다)")&&(form.reset(),schoolInput.value="",gradeInput.value="",classInput.value="",nameInput.value="",localStorage.removeItem("family_activity_temp"),imagePreview.innerHTML="사진을 업로드 해주세요",updatePostcardPreview(),updateNametag(),updateReason(),updateSchoolInfo(),emojis.forEach(e=>{e.setAttribute("aria-checked","false"),e.classList.remove("bg-amber-200")}),emojis.length>0&&(emojis[0].setAttribute("tabindex","0")),finalEmoji.textContent="?",showFeedback("모든 내용이 초기화되었습니다.",!0))});
             
             // 선생님용 학습지 PDF 다운로드 기능
             teacherPrintBtn.addEventListener('click', async () => {
