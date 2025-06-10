@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✉️ 우리 가족, 행복한 순간 그리기 (v2.10 선생님용 학습지 수정)</title>
+    <title>✉️ 우리 가족, 행복한 순간 그리기 (선생님용 학습지 수정)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,91 +17,6 @@
         body { font-family: 'Noto Sans KR', sans-serif; }
         .feedback-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; z-index: 1000; opacity: 0; transition: opacity 0.5s ease-in-out; }
         
-        /* 🎯 캡처 영역 전용 스타일 */
-        #captureArea {
-            width: 100%;
-            max-width: 600px;
-            min-height: auto !important;
-            height: fit-content !important;
-            padding: 1.5rem !important;
-            background: #fffbeb;
-            border: 2px dashed #f59e0b;
-            border-radius: 12px;
-            position: relative;
-            isolation: isolate; /* 캡처 영역 격리 */
-        }
-
-        /* 캡처 시 불필요한 요소 숨김 */
-        .capture-hide {
-            display: none !important;
-        }
-
-        /* 동적 크기 조정 */
-        .dynamic-content {
-            height: auto !important;
-            aspect-ratio: unset !important;
-        }
-
-        .dynamic-message {
-            height: auto !important;
-            min-height: 2rem !important;
-            padding: 0.75rem;
-            background: #f9fafb;
-            border-left: 4px solid #f59e0b;
-            border-radius: 4px;
-            line-height: 1.5;
-            word-wrap: break-word;
-            font-size: 0.95rem;
-        }
-
-        .dynamic-image {
-            min-height: 200px;
-            max-height: 350px;
-            height: auto;
-        }
-
-        /* 학급 정보 헤더 - 줄바꿈 방지 수정 */
-        .school-header {
-            background: linear-gradient(135deg, #fef3c7, #fed7aa);
-            border: 2px solid #f59e0b;
-            border-radius: 8px;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .school-info {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #92400e;
-            gap: 0.5rem;
-            flex-wrap: nowrap; /* 줄바꿈 방지 */
-        }
-
-        .school-info span {
-            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-            flex-shrink: 0; /* 크기 축소 방지 */
-            min-width: 0; /* flex 아이템 최소 너비 설정 */
-        }
-
-        /* 플레이스홀더 스타일 */
-        .placeholder-text {
-            color: #9ca3af;
-            font-style: italic;
-        }
-
-        /* 결과물 카드 스타일 */
-        .result-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 1rem;
-        }
-
         /* 📄 선생님용 학습지 A4 최적화 - 수정된 스타일 */
         .worksheet-page {
             width: 794px; /* A4 픽셀 크기 */
@@ -110,17 +25,21 @@
             background: white;
             box-sizing: border-box;
             font-family: 'Noto Sans KR', sans-serif;
-            position: absolute;
-            top: -9999px;
+            /* 문제 수정: 요소를 숨기지 않고 오프스크린에 위치 */
+            position: fixed;
+            top: 0;
             left: -9999px;
-            visibility: hidden;
+            z-index: -1;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .worksheet-page.capturing {
             position: static;
-            visibility: visible;
-            top: auto;
-            left: auto;
+            opacity: 1;
+            z-index: 1000;
+            left: 0;
+            pointer-events: all;
         }
 
         /* 진행 상태 오버레이 */
@@ -168,6 +87,73 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* 캡처 영역 전용 스타일 */
+        #captureArea {
+            width: 100%;
+            max-width: 600px;
+            padding: 1.5rem;
+            background: #fffbeb;
+            border: 2px dashed #f59e0b;
+            border-radius: 12px;
+        }
+
+        .school-header {
+            background: linear-gradient(135deg, #fef3c7, #fed7aa);
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .school-info {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #92400e;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+        }
+
+        .school-info span {
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-width: 0;
+        }
+
+        .placeholder-text {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        .result-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .dynamic-image {
+            min-height: 200px;
+            max-height: 350px;
+            height: auto;
+        }
+
+        .dynamic-message {
+            height: auto;
+            min-height: 2rem;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 4px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+        }
+
         /* 반응형 대응 */
         @media (max-width: 600px) {
             .school-info {
@@ -182,7 +168,7 @@
         }
 
         @media print {
-            .no-print, #activity-form, .worksheet-container { display: none !important; }
+            .no-print { display: none !important; }
             main { border: none; box-shadow: none; padding: 0; margin: 0; }
             #captureArea { display: block !important; }
         }
@@ -280,7 +266,7 @@
                 </section>
             </div>
             
-            <!-- 🎯 캡처 영역 - 완전히 분리된 구조 -->
+            <!-- 🎯 캡처 영역 -->
             <div id="captureArea">
                 <!-- 🏫 학급 정보 헤더 -->
                 <div class="school-header">
@@ -354,7 +340,7 @@
             </div>
         </div>
 
-        <div style="space-y: 32px;">
+        <div>
             <section style="margin-bottom: 32px;">
                 <h2 style="font-size: 20px; font-weight: bold; color: #333; margin-bottom: 16px;">🟡 도입: 생각 열기</h2>
                 <p style="margin-bottom: 12px;"><b>Q.</b> 가족과 함께한 행복했던 순간이 있나요? (해당하는 곳에 O 표시 하세요)</p>
@@ -381,7 +367,7 @@
     </div>
 
     <div id="worksheet-page-2" class="worksheet-page">
-        <div style="space-y: 32px;">
+        <div>
             <section style="margin-bottom: 32px;">
                 <h2 style="font-size: 20px; font-weight: bold; color: #333; margin-bottom: 16px;">🔴 활동2: 공감 이름표 만들기</h2>
                 <p style="margin-bottom: 12px;"><b>Q.</b> 가족에게 어떤 말을 듣고, 어떤 말을 하고 싶나요? 아래 이름표를 채워보세요.</p>
@@ -489,7 +475,7 @@
                 const captureArea = document.getElementById('captureArea');
                 
                 return html2canvas(captureArea, {
-                    scale: 3, // 더 높은 해상도
+                    scale: 3,
                     useCORS: true,
                     backgroundColor: '#fffbeb',
                     width: captureArea.offsetWidth,
@@ -503,6 +489,33 @@
                 });
             }
 
+            // 🛠️ 수정된 워크시트 캡처 함수
+            async function captureWorksheetPage(pageElement) {
+                // 먼저 요소를 보이게 만듦
+                pageElement.classList.add('capturing');
+                
+                // DOM 업데이트 대기
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                try {
+                    const canvas = await html2canvas(pageElement, {
+                        scale: 2,
+                        width: 794,
+                        height: 1123,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        logging: false,
+                        allowTaint: false,
+                        foreignObjectRendering: true
+                    });
+                    
+                    return canvas;
+                } finally {
+                    // 캡처 후 다시 숨김
+                    pageElement.classList.remove('capturing');
+                }
+            }
+
             // 진행 상태 표시 함수
             function showProgress(text) {
                 progressText.textContent = text;
@@ -513,9 +526,8 @@
                 progressOverlay.classList.remove('show');
             }
 
-            // 🏫 학급 정보 업데이트 함수 (기본값 제거)
+            // 🏫 학급 정보 업데이트 함수
             const updateSchoolInfo = () => {
-                // 입력값이 있을 때만 표시, 없으면 플레이스홀더 스타일 유지
                 if (schoolInput.value.trim()) {
                     schoolPreview.textContent = schoolInput.value;
                     schoolPreview.className = '';
@@ -550,7 +562,6 @@
             const updatePostcardPreview = () => {
                 postcardMessagePreview.textContent = postcardMessageInput.value || "여기에 엽서 내용이 표시됩니다.";
                 updateCharCount();
-                adjustCaptureAreaSize();
             };
             
             const updateNametag = () => {
@@ -575,20 +586,6 @@
                     charCount.className = 'text-gray-500';
                 }
             };
-
-            // 캡처 영역 크기 동적 조정
-            const adjustCaptureAreaSize = () => {
-                const messageLength = postcardMessageInput.value.length;
-                const captureArea = document.getElementById('captureArea');
-                
-                if (messageLength > 300) {
-                    captureArea.style.maxWidth = '700px';
-                } else if (messageLength > 150) {
-                    captureArea.style.maxWidth = '650px';
-                } else {
-                    captureArea.style.maxWidth = '600px';
-                }
-            };
             
             const showFeedback = (message, isSuccess = true) => {
                 const toast = document.createElement("div");
@@ -601,54 +598,6 @@
                     toast.style.opacity = "0";
                     setTimeout(() => { toast.remove(); }, 500);
                 }, 3000);
-            };
-            
-            const saveData = () => {
-                const data = {
-                    thought: thoughtInput.value,
-                    postcardMessage: postcardMessageInput.value,
-                    familyName: familyNameInput.value,
-                    wordToHear: wordToHearInput.value,
-                    wordToSay: wordToSayInput.value,
-                    emoji: finalEmoji.textContent,
-                    reason: reasonInput.value,
-                    school: schoolInput.value,
-                    grade: gradeInput.value,
-                    class: classInput.value,
-                    name: nameInput.value
-                };
-                localStorage.setItem("family_activity_temp", JSON.stringify(data));
-            };
-            
-            const loadData = () => {
-                const saved = localStorage.getItem("family_activity_temp");
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    thoughtInput.value = data.thought || "";
-                    postcardMessageInput.value = data.postcardMessage || "";
-                    familyNameInput.value = data.familyName || "";
-                    wordToHearInput.value = data.wordToHear || "";
-                    wordToSayInput.value = data.wordToSay || "";
-                    reasonInput.value = data.reason || "";
-                    schoolInput.value = data.school || "";
-                    gradeInput.value = data.grade || "";
-                    classInput.value = data.class || "";
-                    nameInput.value = data.name || "";
-                    
-                    if (data.emoji && data.emoji !== "?") {
-                        emojis.forEach(emoji => {
-                            if (emoji.textContent === data.emoji) {
-                                selectEmoji(emoji);
-                            }
-                        });
-                    }
-                    
-                    updatePostcardPreview();
-                    updateNametag();
-                    updateReason();
-                    updateSchoolInfo();
-                    showFeedback("이전 작업 내용을 복원했습니다.", true);
-                }
             };
             
             const selectEmoji = (emojiElement) => {
@@ -771,8 +720,43 @@
                 }
             });
 
+            // 📋 선생님용 학습지 PDF 다운로드 (수정된 버전)
+            teacherPrintBtn.addEventListener('click', async () => {
+                try {
+                    showProgress('📋 선생님용 학습지 PDF 생성 중... (2페이지)');
+
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = 210;
+                    const pdfHeight = 297;
+
+                    // 1페이지 캡처
+                    const page1 = document.getElementById('worksheet-page-1');
+                    const canvas1 = await captureWorksheetPage(page1);
+                    const imgData1 = canvas1.toDataURL('image/png');
+                    pdf.addImage(imgData1, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+                    // 2페이지 추가
+                    pdf.addPage();
+                    
+                    const page2 = document.getElementById('worksheet-page-2');
+                    const canvas2 = await captureWorksheetPage(page2);
+                    const imgData2 = canvas2.toDataURL('image/png');
+                    pdf.addImage(imgData2, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                    pdf.save(`가족_행복순간_선생님용_학습지_2페이지_${timestamp}.pdf`);
+                    
+                    hideProgress();
+                    showFeedback('✅ 선생님용 학습지 PDF(2페이지)가 다운로드되었습니다!', true);
+                } catch (err) {
+                    hideProgress();
+                    showFeedback('⚠️ PDF 생성에 실패했습니다.', false);
+                    console.error('PDF 생성 에러:', err);
+                }
+            });
+
             resetBtn.addEventListener('click', () => {
-                if (confirm("정말로 모든 내용을 지우고 처음부터 다시 시작할까요? (저장된 내용도 삭제됩니다)")) {
+                if (confirm("정말로 모든 내용을 지우고 처음부터 다시 시작할까요?")) {
                     // 모든 입력 필드 초기화
                     thoughtInput.value = "";
                     postcardMessageInput.value = "";
@@ -785,7 +769,6 @@
                     classInput.value = "";
                     nameInput.value = "";
                     
-                    localStorage.removeItem("family_activity_temp");
                     imagePreview.innerHTML = "사진을 업로드 해주세요";
                     
                     updatePostcardPreview();
@@ -806,77 +789,8 @@
                 }
             });
             
-            // 📋 선생님용 학습지 PDF 다운로드 (수정된 버전)
-            teacherPrintBtn.addEventListener('click', async () => {
-                try {
-                    showProgress('📋 선생님용 학습지 PDF 생성 중... (2페이지)');
-
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfWidth = 210;
-                    const pdfHeight = 297;
-
-                    // 1페이지 캡처
-                    const page1 = document.getElementById('worksheet-page-1');
-                    page1.classList.add('capturing');
-                    
-                    // 렌더링 대기
-                    await new Promise(resolve => setTimeout(resolve, 100));
-
-                    const canvas1 = await html2canvas(page1, { 
-                        scale: 2,
-                        width: 794,
-                        height: 1123,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        logging: false
-                    });
-
-                    const imgData1 = canvas1.toDataURL('image/png');
-                    pdf.addImage(imgData1, 'PNG', 0, 0, pdfWidth, pdfHeight);
-
-                    // 1페이지 정리
-                    page1.classList.remove('capturing');
-
-                    // 2페이지 추가
-                    pdf.addPage();
-                    
-                    const page2 = document.getElementById('worksheet-page-2');
-                    page2.classList.add('capturing');
-                    
-                    // 렌더링 대기
-                    await new Promise(resolve => setTimeout(resolve, 100));
-
-                    const canvas2 = await html2canvas(page2, { 
-                        scale: 2,
-                        width: 794,
-                        height: 1123,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        logging: false
-                    });
-
-                    const imgData2 = canvas2.toDataURL('image/png');
-                    pdf.addImage(imgData2, 'PNG', 0, 0, pdfWidth, pdfHeight);
-
-                    // 2페이지 정리
-                    page2.classList.remove('capturing');
-                    
-                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                    pdf.save(`가족_행복순간_선생님용_학습지_2페이지_${timestamp}.pdf`);
-                    
-                    hideProgress();
-                    showFeedback('✅ 선생님용 학습지 PDF(2페이지)가 다운로드되었습니다!', true);
-                } catch (err) {
-                    hideProgress();
-                    showFeedback('⚠️ PDF 생성에 실패했습니다.', false);
-                    console.error('PDF 생성 에러:', err);
-                }
-            });
-            
-            // 초기화 - 학급 정보도 올바르게 초기화
-            updateSchoolInfo(); // 초기에 플레이스홀더 표시
-            loadData();
-            setInterval(saveData, 10000);
+            // 초기화
+            updateSchoolInfo();
         });
     </script>
 </body>
