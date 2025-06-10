@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✉️ 우리 가족, 행복한 순간 그리기 (v2.3 최종본)</title>
+    <title>✉️ 우리 가족, 행복한 순간 그리기 (v2.4 최종 개선본)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,8 +18,84 @@
         .feedback-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; z-index: 1000; opacity: 0; transition: opacity 0.5s ease-in-out; }
         #postcardMessagePreview { overflow-y: auto; scrollbar-width: thin; }
 
+        /* 🎯 동적 크기 조정을 위한 CSS 개선 */
+        #captureArea {
+            width: 100%;
+            max-width: 600px;
+            min-height: auto !important;
+            height: fit-content !important;
+            padding: 1.5rem !important;
+        }
+
+        /* 고정 비율 제거하고 동적 크기로 변경 */
+        .dynamic-content {
+            height: auto !important;
+            aspect-ratio: unset !important;
+        }
+
+        .dynamic-message {
+            height: auto !important;
+            min-height: 2rem !important;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 4px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .dynamic-image {
+            min-height: 200px;
+            max-height: 350px;
+            height: auto;
+        }
+
+        /* 진행 상태 오버레이 */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .progress-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media print {
-            /* '활동 결과 인쇄하기' 버튼 전용 스타일 */
             .no-print, #activity-form, #printable-worksheet { display: none; }
             main { border: none; box-shadow: none; padding: 0; margin: 0; }
             #captureArea { display: block !important; }
@@ -32,22 +108,63 @@
         <header class="text-center mb-10">
             <h1 class="text-3xl sm:text-4xl font-bold text-amber-800">✉️ 우리 가족, 행복한 순간 그리기</h1>
             <p class="text-stone-600 mt-2">가족과의 소중한 경험을 떠올려 글과 그림으로 표현해봅시다.</p>
+            <div class="mt-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                💡 <strong>똑똑한 기능:</strong> 메시지 길이에 맞춰 크기가 자동 조정되며, 인쇄할 때는 A4에 최적화됩니다!
+            </div>
         </header>
 
         <form id="activity-form" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-6">
                 <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🟡 도입: 생각 열기</h2><fieldset><legend class="font-semibold text-stone-700 block mb-2">Q. 가족과 함께한 행복했던 순간이 있나요?</legend><div class="flex items-center gap-4"><label><input type="radio" name="happy_moment" value="yes" class="mr-1"> 네</label><label><input type="radio" name="happy_moment" value="no" class="mr-1"> 아니요</label></div></fieldset><textarea id="thoughtInput" class="mt-2 w-full p-2 border border-stone-300 rounded-md" placeholder="가장 기억에 남는 장면을 말풍선에 적어 보세요!"></textarea></section>
-                <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🔵 활동1: 엽서로 표현해요</h2><label for="imageUpload" class="font-semibold text-stone-700 block mb-2">✍️ 장면에 어울리는 사진을 올려주세요.</label><input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-100 file:text-orange-700 hover:file:bg-orange-200"><div class="mt-4"><label for="postcardMessageInput" class="font-semibold text-stone-700 block mb-2">💬 엽서에 남길 말을 자유롭게 적어보세요.</label><textarea id="postcardMessageInput" rows="4" class="w-full p-2 border border-stone-300 rounded-md" placeholder="그때의 감정이나 앞으로 가족과 하고 싶은 일 등을 자유롭게 작성할 수 있어요."></textarea></div></section>
-                <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🔴 활동2: 공감 이름표 만들기</h2><div class="space-y-2"><input type="text" id="familyNameInput" class="w-full p-2 border" placeholder="가족 이름 (예: 사랑하는 엄마께)"><textarea id="wordToHearInput" class="w-full p-2 border" placeholder="내가 듣고 싶은 말 (예: 네가 자랑스러워.)" rows="2"></textarea><textarea id="wordToSayInput" class="w-full p-2 border" placeholder="내가 하고 싶은 말 (예: 항상 감사해요!)" rows="2"></textarea></div></section>
+                <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🔵 활동1: 엽서로 표현해요</h2><label for="imageUpload" class="font-semibold text-stone-700 block mb-2">✍️ 장면에 어울리는 사진을 올려주세요.</label><input type="file" id="imageUpload" accept="image/*" class="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-100 file:text-orange-700 hover:file:bg-orange-200"><div class="mt-4"><label for="postcardMessageInput" class="font-semibold text-stone-700 block mb-2">💬 엽서에 남길 말을 자유롭게 적어보세요.</label><textarea id="postcardMessageInput" rows="4" class="w-full p-2 border border-stone-300 rounded-md resize-vertical" placeholder="그때의 감정이나 앞으로 가족과 하고 싶은 일 등을 자유롭게 작성할 수 있어요."></textarea><div class="text-xs text-gray-500 mt-1">📝 글자 수: <span id="charCount">0</span>자 (길게 써도 자동으로 크기가 조정됩니다)</div></div></section>
+                <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🔴 활동2: 공감 이름표 만들기</h2><div class="space-y-2"><input type="text" id="familyNameInput" class="w-full p-2 border" placeholder="가족 이름 (예: 사랑하는 엄마께)"><textarea id="wordToHearInput" class="w-full p-2 border resize-vertical" placeholder="내가 듣고 싶은 말 (예: 네가 자랑스러워.)" rows="2"></textarea><textarea id="wordToSayInput" class="w-full p-2 border resize-vertical" placeholder="내가 하고 싶은 말 (예: 항상 감사해요!)" rows="2"></textarea></div></section>
                 <section><h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-200 pb-2">🟢 마무리: 감정 정리하기</h2><div id="emoji-selector" role="radiogroup" aria-label="오늘의 기분 선택" class="flex justify-around p-2 bg-stone-100 rounded-lg"><span role="radio" aria-checked="false" tabindex="0" class="text-3xl cursor-pointer p-1 rounded-full">😊</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">😐</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">😢</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">😠</span><span role="radio" aria-checked="false" tabindex="-1" class="text-3xl cursor-pointer p-1 rounded-full">🙌</span></div><textarea id="reasonInput" class="mt-2 w-full p-2 border border-stone-300 rounded-md" placeholder="그렇게 느끼는 이유를 간단히 적어주세요."></textarea></section>
             </div>
-            <div id="captureArea" class="bg-amber-50 p-6 rounded-lg border-2 border-dashed border-amber-300"><h3 class="text-2xl font-bold text-center text-amber-900 mb-4">✨ 나의 활동 결과물 ✨</h3><div class="bg-white p-4 rounded-lg shadow-md aspect-[4/3] flex flex-col"><div id="imagePreview" class="flex-1 bg-stone-200 rounded flex items-center justify-center text-stone-400 text-center">사진을 업로드 해주세요</div><div class="pt-3 text-stone-700 whitespace-pre-wrap break-words h-24"><p id="postcardMessagePreview" class="w-full h-full">여기에 엽서 내용이 표시됩니다.</p></div></div><div class="mt-6 bg-white p-4 rounded-lg shadow-md"><p id="nametagFamily" class="font-bold text-lg text-orange-700">가족 이름</p><div class="mt-2 space-y-2"><p class="text-sm"> 듣고 싶은 말: <span id="nametagToHear" class="text-stone-600">...</span></p><p class="text-sm"> 하고 싶은 말: <span id="nametagToSay" class="text-stone-600">...</span></p></div></div><div class="mt-6 bg-white p-4 rounded-lg shadow-md flex items-center gap-4"><p class="font-bold">오늘 내 기분:</p><p id="finalEmoji" class="text-4xl">?</p><p id="finalReason" class="text-stone-600 text-sm flex-1">...</p></div></div>
+            <div id="captureArea" class="bg-amber-50 p-6 rounded-lg border-2 border-dashed border-amber-300">
+                <h3 class="text-2xl font-bold text-center text-amber-900 mb-4">✨ 나의 활동 결과물 ✨</h3>
+                
+                <!-- 🎯 동적 크기 조정 적용 -->
+                <div class="bg-white p-4 rounded-lg shadow-md dynamic-content flex flex-col">
+                    <div id="imagePreview" class="dynamic-image bg-stone-200 rounded flex items-center justify-center text-stone-400 text-center">사진을 업로드 해주세요</div>
+                    <div class="pt-3 text-stone-700 whitespace-pre-wrap break-words">
+                        <p id="postcardMessagePreview" class="dynamic-message">여기에 엽서 내용이 표시됩니다.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 bg-white p-4 rounded-lg shadow-md">
+                    <p id="nametagFamily" class="font-bold text-lg text-orange-700">가족 이름</p>
+                    <div class="mt-2 space-y-2">
+                        <p class="text-sm"> 듣고 싶은 말: <span id="nametagToHear" class="text-stone-600">...</span></p>
+                        <p class="text-sm"> 하고 싶은 말: <span id="nametagToSay" class="text-stone-600">...</span></p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                    <p class="font-bold">오늘 내 기분:</p>
+                    <p id="finalEmoji" class="text-4xl">?</p>
+                    <p id="finalReason" class="text-stone-600 text-sm flex-1">...</p>
+                </div>
+                
+                <!-- 작성 정보 -->
+                <div class="text-center text-xs text-gray-500 border-t pt-3 mt-4">
+                    작성일: <span id="datePreview"></span> | 이름: ________________
+                </div>
+            </div>
         </form>
 
         <footer class="mt-10 pt-6 border-t-2 border-amber-200 flex flex-wrap justify-center gap-4">
-            <button id="saveBtn" aria-label="활동 결과물을 이미지 파일로 저장하기" class="px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600">🖼️ 이미지로 저장</button>
-            <button id="printBtn" aria-label="웹 활동 결과 인쇄하기" class="px-6 py-3 bg-sky-500 text-white font-bold rounded-lg shadow-md hover:bg-sky-600">📝 활동 결과 인쇄하기</button>
-            <button id="teacherPrintBtn" aria-label="선생님용 빈 학습지 PDF로 다운로드" class="px-6 py-3 bg-indigo-500 text-white font-bold rounded-lg shadow-md hover:bg-indigo-600">📄 선생님용 학습지 PDF 다운로드</button>
+            <button id="saveBtn" aria-label="활동 결과물을 이미지 파일로 저장하기" class="px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 flex flex-col items-center">
+                <span>🖼️ 이미지로 저장</span>
+                <span class="text-xs opacity-75">(PNG 파일)</span>
+            </button>
+            <button id="printBtn" aria-label="활동 결과물을 PDF로 인쇄용 저장하기" class="px-6 py-3 bg-sky-500 text-white font-bold rounded-lg shadow-md hover:bg-sky-600 flex flex-col items-center">
+                <span>📄 활동 결과 인쇄하기</span>
+                <span class="text-xs opacity-75">(PDF 파일, A4 최적화)</span>
+            </button>
+            <button id="teacherPrintBtn" aria-label="선생님용 빈 학습지 PDF로 다운로드" class="px-6 py-3 bg-indigo-500 text-white font-bold rounded-lg shadow-md hover:bg-indigo-600 flex flex-col items-center">
+                <span>👩‍🏫 선생님용 학습지</span>
+                <span class="text-xs opacity-75">(빈 워크시트 PDF)</span>
+            </button>
             <button id="resetBtn" aria-label="모든 내용 지우고 처음부터 다시 시작하기" class="px-6 py-3 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600">🔄 처음부터 다시하기</button>
         </footer>
     </main>
@@ -57,60 +174,226 @@
         <div class="space-y-12"><section><h2 class="text-xl font-bold text-gray-700 mb-3">🟡 도입: 생각 열기</h2><p class="mb-2"><b>Q.</b> 가족과 함께한 행복했던 순간이 있나요? (해당하는 곳에 O 표시 하세요)</p><p class="ml-4">□ 네 &nbsp;&nbsp;&nbsp;&nbsp; □ 아니요</p><p class="mt-4"><b>👉</b> 가장 기억에 남는 장면을 아래 말풍선에 적어 보세요!</p><div class="mt-2 ml-4 border rounded-xl p-4 h-24 bg-gray-50"></div></section><section><h2 class="text-xl font-bold text-gray-700 mb-3">🔵 활동1: 엽서로 표현해요</h2><p><b>Q.</b> 그 순간을 엽서로 만든다면 어떤 그림을 그리고 싶나요? 아래 네모 칸에 그리거나, 사진을 붙여보세요.</p><div class="w-full h-64 border-2 border-dashed my-4 flex items-center justify-center text-gray-400"><span>[ 그림을 그리거나 사진을 붙이는 곳 ]</span></div><p><b>💬</b> 엽서에 남기고 싶은 말을 자유롭게 적어보세요.</p><div class="mt-2 border-b border-gray-400 h-8"></div><div class="mt-2 border-b border-gray-400 h-8"></div><div class="mt-2 border-b border-gray-400 h-8"></div></section><section><h2 class="text-xl font-bold text-gray-700 mb-3">🔴 활동2: 공감 이름표 만들기</h2><p><b>Q.</b> 가족에게 어떤 말을 듣고, 어떤 말을 하고 싶나요? 아래 이름표를 채워보세요.</p><div class="mt-2 p-4 border rounded-lg bg-gray-50 space-y-3"><p><b>가족 이름:</b> _________________________</p><p><b>내가 듣고 싶은 말:</b> __________________________________________________</p><p><b>내가 하고 싶은 말:</b> __________________________________________________</p></div></section><section><h2 class="text-xl font-bold text-gray-700 mb-3">🟢 마무리: 감정 정리하기</h2><p><b>Q.</b> 오늘 활동을 마치며, 지금 내 기분은 어떤가요? 마음에 드는 기분에 O 표시하고 이유를 적어보세요.</p><div class="flex justify-around text-4xl my-4"><span>😊</span><span>😐</span><span>😢</span><span>😠</span><span>🙌</span></div><p><b>이유:</b> _________________________________________________________________</p></section></div>
     </div>
 
+    <!-- 진행 상태 오버레이 -->
+    <div id="progressOverlay" class="progress-overlay">
+        <div class="progress-content">
+            <div class="spinner"></div>
+            <div id="progressText" class="font-semibold text-gray-700">처리 중...</div>
+            <div class="text-xs text-gray-500 mt-2">잠시만 기다려주세요</div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const { jsPDF } = window.jspdf;
             
-            // --- 변수 선언 (생략) ---
-            const form=document.getElementById("activity-form"),imageUpload=document.getElementById("imageUpload"),thoughtInput=document.getElementById("thoughtInput"),postcardMessageInput=document.getElementById("postcardMessageInput"),familyNameInput=document.getElementById("familyNameInput"),wordToHearInput=document.getElementById("wordToHearInput"),wordToSayInput=document.getElementById("wordToSayInput"),emojiSelector=document.getElementById("emoji-selector"),emojis=emojiSelector.querySelectorAll('[role="radio"]'),reasonInput=document.getElementById("reasonInput"),imagePreview=document.getElementById("imagePreview"),postcardMessagePreview=document.getElementById("postcardMessagePreview"),nametagFamily=document.getElementById("nametagFamily"),nametagToHear=document.getElementById("nametagToHear"),nametagToSay=document.getElementById("nametagToSay"),finalEmoji=document.getElementById("finalEmoji"),finalReason=document.getElementById("finalReason"),saveBtn=document.getElementById("saveBtn"),resultPrintBtn=document.getElementById("printBtn"),teacherPrintBtn=document.getElementById("teacherPrintBtn"),resetBtn=document.getElementById("resetBtn");
+            // DOM 요소들
+            const form=document.getElementById("activity-form"),imageUpload=document.getElementById("imageUpload"),thoughtInput=document.getElementById("thoughtInput"),postcardMessageInput=document.getElementById("postcardMessageInput"),familyNameInput=document.getElementById("familyNameInput"),wordToHearInput=document.getElementById("wordToHearInput"),wordToSayInput=document.getElementById("wordToSayInput"),emojiSelector=document.getElementById("emoji-selector"),emojis=emojiSelector.querySelectorAll('[role="radio"]'),reasonInput=document.getElementById("reasonInput"),imagePreview=document.getElementById("imagePreview"),postcardMessagePreview=document.getElementById("postcardMessagePreview"),nametagFamily=document.getElementById("nametagFamily"),nametagToHear=document.getElementById("nametagToHear"),nametagToSay=document.getElementById("nametagToSay"),finalEmoji=document.getElementById("finalEmoji"),finalReason=document.getElementById("finalReason"),saveBtn=document.getElementById("saveBtn"),resultPrintBtn=document.getElementById("printBtn"),teacherPrintBtn=document.getElementById("teacherPrintBtn"),resetBtn=document.getElementById("resetBtn"),charCount=document.getElementById("charCount"),datePreview=document.getElementById("datePreview"),progressOverlay=document.getElementById("progressOverlay"),progressText=document.getElementById("progressText");
 
-            // --- 함수 정의 (생략) ---
-            const updatePostcardPreview=()=>{postcardMessagePreview.textContent=postcardMessageInput.value||"여기에 엽서 내용이 표시됩니다.",adjustFontSize(postcardMessagePreview,1)},updateNametag=()=>{nametagFamily.textContent=familyNameInput.value||"가족 이름",nametagToHear.textContent=wordToHearInput.value||"...",nametagToSay.textContent=wordToSayInput.value||"..."},updateReason=()=>{finalReason.textContent=reasonInput.value||"..."},adjustFontSize=(e,t=1)=>{e.style.fontSize=`${t}rem`;let o=t;for(;"IntersectionObserver"in window&&e.scrollHeight>e.clientHeight&&o>0.5;)o-=0.05,e.style.fontSize=`${o}rem`},showFeedback=(e,t=!0)=>{const o=document.createElement("div");o.textContent=e,o.className="feedback-toast",o.style.backgroundColor=t?"#28a745":"#dc3545",document.body.appendChild(o),setTimeout(()=>{o.style.opacity="1"},10),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>{o.remove()},500)},3e3)},saveData=()=>{const e={happyMoment:form.elements.happy_moment.value,thought:thoughtInput.value,postcardMessage:postcardMessageInput.value,familyName:familyNameInput.value,wordToHear:wordToHearInput.value,wordToSay:wordToSayInput.value,emoji:finalEmoji.textContent,reason:reasonInput.value};localStorage.setItem("family_activity_temp",JSON.stringify(e))},loadData=()=>{const e=localStorage.getItem("family_activity_temp");if(e){const t=JSON.parse(e);t.happyMoment&&(form.elements.happy_moment.value=t.happyMoment),thoughtInput.value=t.thought||"",postcardMessageInput.value=t.postcardMessage||"",familyNameInput.value=t.familyName||"",wordToHearInput.value=t.wordToHear||"",wordToSayInput.value=t.wordToSay||"",reasonInput.value=t.reason||"",t.emoji&&"?"!==t.emoji&&emojis.forEach(e=>{e.textContent===t.emoji&&selectEmoji(e)}),updatePostcardPreview(),updateNametag(),updateReason(),showFeedback("이전 작업 내용을 복원했습니다.",!0)}},selectEmoji=e=>{emojis.forEach(e=>{e.setAttribute("aria-checked","false"),e.setAttribute("tabindex","-1"),e.classList.remove("bg-amber-200")}),e.setAttribute("aria-checked","true"),e.setAttribute("tabindex","0"),e.classList.add("bg-amber-200"),finalEmoji.textContent=e.textContent};
+            // 날짜 설정
+            datePreview.textContent = new Date().toLocaleDateString('ko-KR');
 
-            // --- 이벤트 리스너 ---
+            // 🎯 핵심: 공통 캡처 함수
+            async function captureContent() {
+                return html2canvas(document.getElementById('captureArea'), {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    height: document.getElementById('captureArea').scrollHeight,
+                    width: document.getElementById('captureArea').scrollWidth,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+            }
+
+            // 진행 상태 표시 함수
+            function showProgress(text) {
+                progressText.textContent = text;
+                progressOverlay.classList.add('show');
+            }
+
+            function hideProgress() {
+                progressOverlay.classList.remove('show');
+            }
+
+            // 기존 함수들
+            const updatePostcardPreview=()=>{
+                postcardMessagePreview.textContent=postcardMessageInput.value||"여기에 엽서 내용이 표시됩니다.";
+                adjustFontSize(postcardMessagePreview,0.95);
+                updateCharCount();
+                adjustCaptureAreaSize();
+            };
+            
+            const updateNametag=()=>{nametagFamily.textContent=familyNameInput.value||"가족 이름",nametagToHear.textContent=wordToHearInput.value||"...",nametagToSay.textContent=wordToSayInput.value||"..."};
+            
+            const updateReason=()=>{finalReason.textContent=reasonInput.value||"..."};
+            
+            const adjustFontSize=(e,t=1)=>{e.style.fontSize=`${t}rem`;let o=t;for(;e.scrollHeight>e.clientHeight&&o>0.5;)o-=0.05,e.style.fontSize=`${o}rem`};
+            
+            // 글자 수 업데이트
+            const updateCharCount = () => {
+                const count = postcardMessageInput.value.length;
+                charCount.textContent = count;
+                if (count > 200) {
+                    charCount.className = 'text-red-500 font-bold';
+                } else if (count > 100) {
+                    charCount.className = 'text-orange-500 font-medium';
+                } else {
+                    charCount.className = 'text-gray-500';
+                }
+            };
+
+            // 캡처 영역 크기 동적 조정
+            const adjustCaptureAreaSize = () => {
+                const messageLength = postcardMessageInput.value.length;
+                const captureArea = document.getElementById('captureArea');
+                
+                if (messageLength > 300) {
+                    captureArea.style.maxWidth = '700px';
+                } else if (messageLength > 150) {
+                    captureArea.style.maxWidth = '650px';
+                } else {
+                    captureArea.style.maxWidth = '600px';
+                }
+            };
+            
+            const showFeedback=(e,t=!0)=>{const o=document.createElement("div");o.textContent=e,o.className="feedback-toast",o.style.backgroundColor=t?"#28a745":"#dc3545",document.body.appendChild(o),setTimeout(()=>{o.style.opacity="1"},10),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>{o.remove()},500)},3e3)};
+            
+            const saveData=()=>{const e={happyMoment:form.elements.happy_moment.value,thought:thoughtInput.value,postcardMessage:postcardMessageInput.value,familyName:familyNameInput.value,wordToHear:wordToHearInput.value,wordToSay:wordToSayInput.value,emoji:finalEmoji.textContent,reason:reasonInput.value};localStorage.setItem("family_activity_temp",JSON.stringify(e))};
+            
+            const loadData=()=>{const e=localStorage.getItem("family_activity_temp");if(e){const t=JSON.parse(e);t.happyMoment&&(form.elements.happy_moment.value=t.happyMoment),thoughtInput.value=t.thought||"",postcardMessageInput.value=t.postcardMessage||"",familyNameInput.value=t.familyName||"",wordToHearInput.value=t.wordToHear||"",wordToSayInput.value=t.wordToSay||"",reasonInput.value=t.reason||"",t.emoji&&"?"!==t.emoji&&emojis.forEach(e=>{e.textContent===t.emoji&&selectEmoji(e)}),updatePostcardPreview(),updateNametag(),updateReason(),showFeedback("이전 작업 내용을 복원했습니다.",!0)}};
+            
+            const selectEmoji=e=>{emojis.forEach(e=>{e.setAttribute("aria-checked","false"),e.setAttribute("tabindex","-1"),e.classList.remove("bg-amber-200")}),e.setAttribute("aria-checked","true"),e.setAttribute("tabindex","0"),e.classList.add("bg-amber-200"),finalEmoji.textContent=e.textContent};
+
+            // 이벤트 리스너
             imageUpload.addEventListener('change',(e)=>{const t=e.target.files[0];t&&(imagePreview.innerHTML='<p class="animate-pulse">🖼️ 이미지 로딩 중...</p>',(()=>{const e=new FileReader;e.onload=e=>{imagePreview.innerHTML=`<img src="${e.target.result}" alt="업로드 이미지" class="w-full h-full object-cover rounded">`},e.readAsDataURL(t)})())});
+            
             postcardMessageInput.addEventListener('input',updatePostcardPreview);
-            familyNameInput.addEventListener('input',updateNametag);wordToHearInput.addEventListener('input',updateNametag);wordToSayInput.addEventListener('input',updateNametag);
+            familyNameInput.addEventListener('input',updateNametag);
+            wordToHearInput.addEventListener('input',updateNametag);
+            wordToSayInput.addEventListener('input',updateNametag);
             reasonInput.addEventListener('input',updateReason);
             emojiSelector.addEventListener('click',e=>{e.target.matches('[role="radio"]')&&selectEmoji(e.target)});
             emojiSelector.addEventListener('keydown',e=>{e.target.matches('[role="radio"]')&&(" "===e.key||"Enter"===e.key)&&(e.preventDefault(),selectEmoji(e.target))});
-            saveBtn.addEventListener('click',()=>{showFeedback("이미지 생성 중...",!0),html2canvas(document.getElementById("captureArea"),{useCORS:!0,scale:2}).then(e=>{const t=document.createElement("a");t.download="우리가족_행복엽서.png",t.href=e.toDataURL("image/png"),t.click(),showFeedback("✅ 이미지가 성공적으로 저장되었습니다!",!0)}).catch(e=>{showFeedback("⚠️ 이미지 저장에 실패했습니다.",!1),console.error(e)})});
-            resultPrintBtn.addEventListener('click',()=>window.print());
+
+            // 🖼️ 이미지로 저장 (PNG)
+            saveBtn.addEventListener('click', async () => {
+                try {
+                    showProgress('🖼️ 이미지 생성 중...');
+                    
+                    const canvas = await captureContent();
+                    const link = document.createElement('a');
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                    link.download = `가족_행복순간_${timestamp}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    hideProgress();
+                    showFeedback('✅ PNG 이미지가 저장되었습니다!', true);
+                } catch (err) {
+                    hideProgress();
+                    showFeedback('⚠️ 이미지 저장에 실패했습니다.', false);
+                    console.error(err);
+                }
+            });
+
+            // 📄 활동 결과 인쇄하기 (동일한 결과물을 PDF로)
+            resultPrintBtn.addEventListener('click', async () => {
+                try {
+                    showProgress('📄 PDF 생성 중... (A4 최적화)');
+                    
+                    // 🎯 핵심: 동일한 캡처 함수 사용!
+                    const canvas = await captureContent();
+                    
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    // A4 크기에 맞춰 스마트 스케일링
+                    const pdfWidth = 210;
+                    const pdfHeight = 297;
+                    const margin = 15;
+                    const contentWidth = pdfWidth - (margin * 2);
+                    const contentHeight = pdfHeight - (margin * 2);
+                    
+                    // 원본 비율 유지하면서 A4에 맞춤
+                    const imgRatio = canvas.width / canvas.height;
+                    const contentRatio = contentWidth / contentHeight;
+                    
+                    let finalWidth, finalHeight, x, y;
+                    
+                    if (imgRatio > contentRatio) {
+                        // 가로가 더 긴 경우
+                        finalWidth = contentWidth;
+                        finalHeight = contentWidth / imgRatio;
+                        x = margin;
+                        y = margin + (contentHeight - finalHeight) / 2;
+                    } else {
+                        // 세로가 더 긴 경우
+                        finalHeight = contentHeight;
+                        finalWidth = contentHeight * imgRatio;
+                        x = margin + (contentWidth - finalWidth) / 2;
+                        y = margin;
+                    }
+                    
+                    pdf.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight);
+                    
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                    pdf.save(`가족_행복순간_인쇄용_${timestamp}.pdf`);
+                    
+                    hideProgress();
+                    showFeedback('✅ A4 최적화 PDF가 저장되었습니다!', true);
+                } catch (err) {
+                    hideProgress();
+                    showFeedback('⚠️ PDF 생성에 실패했습니다.', false);
+                    console.error(err);
+                }
+            });
+
             resetBtn.addEventListener('click',()=>{confirm("정말로 모든 내용을 지우고 처음부터 다시 시작할까요? (저장된 내용도 삭제됩니다)")&&(form.reset(),localStorage.removeItem("family_activity_temp"),imagePreview.innerHTML="사진을 업로드 해주세요",updatePostcardPreview(),updateNametag(),updateReason(),emojis.forEach(e=>{e.setAttribute("aria-checked","false"),e.classList.remove("bg-amber-200")}),emojis.length>0&&(emojis[0].setAttribute("tabindex","0")),finalEmoji.textContent="?",showFeedback("모든 내용이 초기화되었습니다.",!0))});
             
             // 선생님용 학습지 PDF 다운로드 기능
-            teacherPrintBtn.addEventListener('click', () => {
-                const worksheet = document.getElementById('printable-worksheet');
-                showFeedback('PDF 생성 중... 잠시만 기다려주세요.', true);
+            teacherPrintBtn.addEventListener('click', async () => {
+                try {
+                    const worksheet = document.getElementById('printable-worksheet');
+                    showProgress('📋 선생님용 학습지 PDF 생성 중...');
 
-                // 캡처를 위해 잠시 보이게 하되, 화면에 영향을 주지 않도록 처리
-                worksheet.style.position = 'absolute';
-                worksheet.style.left = '-9999px';
-                worksheet.style.display = 'block';
+                    // 캡처를 위해 잠시 보이게 하되, 화면에 영향을 주지 않도록 처리
+                    worksheet.style.position = 'absolute';
+                    worksheet.style.left = '-9999px';
+                    worksheet.style.display = 'block';
 
-                html2canvas(worksheet, { scale: 2, windowWidth: worksheet.scrollWidth, windowHeight: worksheet.scrollHeight })
-                    .then((canvas) => {
-                        const imgData = canvas.toDataURL('image/png');
-                        const pdf = new jsPDF('p', 'mm', 'a4');
-                        const pdfWidth = pdf.internal.pageSize.getWidth();
-                        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                        pdf.save('우리가족_행복한순간_학습지.pdf');
-                    })
-                    .catch(err => {
-                        showFeedback('⚠️ PDF 생성에 실패했습니다.', false);
-                        console.error(err);
-                    })
-                    .finally(() => {
-                        // 작업이 끝나면 다시 숨김
-                        worksheet.style.position = '';
-                        worksheet.style.left = '';
-                        worksheet.style.display = 'none';
-                        showFeedback('✅ PDF 파일이 다운로드되었습니다!', true);
+                    const canvas = await html2canvas(worksheet, { 
+                        scale: 2, 
+                        windowWidth: worksheet.scrollWidth, 
+                        windowHeight: worksheet.scrollHeight,
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
                     });
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                    pdf.save(`가족_행복순간_선생님용_학습지_${timestamp}.pdf`);
+                    
+                    // 작업이 끝나면 다시 숨김
+                    worksheet.style.position = '';
+                    worksheet.style.left = '';
+                    worksheet.style.display = 'none';
+                    
+                    hideProgress();
+                    showFeedback('✅ 선생님용 학습지 PDF가 다운로드되었습니다!', true);
+                } catch (err) {
+                    hideProgress();
+                    showFeedback('⚠️ PDF 생성에 실패했습니다.', false);
+                    console.error(err);
+                }
             });
             
-            // --- 초기화 ---
+            // 초기화
             loadData();
             setInterval(saveData, 10000);
         });
